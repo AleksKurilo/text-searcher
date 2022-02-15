@@ -1,0 +1,5 @@
+rootProject.name = 'text-searcher'
+include 'search-engin'
+include 'aggregator'
+include 'common'
+
