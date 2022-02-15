@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +27,19 @@ public class TextSearcherApp {
     public static void main(String[] args) throws IOException, URISyntaxException {
         logger.info("Starting application");
         List<String> search = FileUtils.readClasspathFileAsList("source/input.txt");
-        List<Map<String, Set<DataSearchInfo>>> resultList = new ArrayList<>();
+        List<Map<String, Set<DataSearchInfo>>> result = new ArrayList<>();
+        Path source = Paths.get(ClassLoader.getSystemResource("source/big-1.txt").toURI());
 
-        try (Stream<String> stream = Files.lines(Paths.get(ClassLoader.getSystemResource("source/big.txt").toURI()))) {
+        streamSearching(search, source, result);
 
+        Map<String, Set<DataSearchInfo>> commonResult = AGGREGATOR_SERVICE.merge(result.toArray(new Map[]{}));
+        OUTPUT_SERVICE.print(commonResult);
+
+        logger.info("Run success");
+    }
+
+    private static void streamSearching(List<String> search, Path source, List<Map<String, Set<DataSearchInfo>>> result) throws IOException {
+        try (Stream<String> stream = Files.lines(source)) {
             AtomicInteger partition = new AtomicInteger(0);
             final List<String> lines = new ArrayList<>();
 
@@ -38,8 +48,7 @@ public class TextSearcherApp {
 
                 if (lines.size() == ConfigurationDefaults.LINE_LIMIT) {
                     String text = lines.stream().collect(Collectors.joining("\n"));
-                    Map<String, Set<DataSearchInfo>> result = SEARCH_ENGINE_SERVICE.match(partition.get(), search, text);
-                    resultList.add(result);
+                    result.add(SEARCH_ENGINE_SERVICE.match(partition.get(), search, text));
                     partition.incrementAndGet();
                     lines.clear();
                 }
@@ -47,13 +56,7 @@ public class TextSearcherApp {
             });
 
             String text = lines.stream().collect(Collectors.joining("\n"));
-            Map<String, Set<DataSearchInfo>> result = SEARCH_ENGINE_SERVICE.match(partition.get(), search, text);
-            resultList.add(result);
+            result.add(SEARCH_ENGINE_SERVICE.match(partition.get(), search, text));
         }
-
-        Map<String, Set<DataSearchInfo>> commonResult = AGGREGATOR_SERVICE.merge(resultList.toArray(new Map[]{}));
-        OUTPUT_SERVICE.print(commonResult);
-
-        logger.info("Run success");
     }
 }
