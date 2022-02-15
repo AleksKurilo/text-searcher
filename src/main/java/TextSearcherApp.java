@@ -28,7 +28,7 @@ public class TextSearcherApp {
         logger.info("Starting application");
         List<String> search = FileUtils.readClasspathFileAsList("source/input.txt");
         List<Map<String, Set<DataSearchInfo>>> result = new ArrayList<>();
-        Path source = Paths.get(ClassLoader.getSystemResource("source/big-1.txt").toURI());
+        Path source = Paths.get(ClassLoader.getSystemResource("source/big.txt").toURI());
 
         streamSearching(search, source, result);
 
