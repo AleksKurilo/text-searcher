@@ -1,10 +1,10 @@
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 class OutputServiceImpl implements OutputService{
 
     @Override
-    public void print(Map<String, List<DataSearchInfo>> map) {
+    public void print(Map<String, Set<DataSearchInfo>> map) {
         map.forEach((key, value) -> {
             System.out.println(key + "-->");
             value.forEach(dataSearchInfo -> {

@@ -1,8 +1,8 @@
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface AggregatorService {
 
-    Map<String, List<DataSearchInfo>> merge(Map<String, List<DataSearchInfo>>... maps);
+    Map<String, Set<DataSearchInfo>> merge(Map<String, Set<DataSearchInfo>>... maps);
 
 }

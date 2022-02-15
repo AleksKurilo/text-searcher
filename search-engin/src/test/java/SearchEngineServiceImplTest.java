@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -17,7 +18,7 @@ class SearchEngineServiceImplTest {
                 "for testing" +
                 "";
 
-        Map<String, List<DataSearchInfo>> actual = unit.match(search, text);
+        Map<String, Set<DataSearchInfo>> actual = unit.match(0, search, text);
 
         assertNotNull(actual.get("test"), "should contains result");
     }

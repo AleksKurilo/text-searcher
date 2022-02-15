@@ -1,7 +1,7 @@
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface OutputService {
 
-    void print(Map<String, List<DataSearchInfo>> map);
+    void print(Map<String, Set<DataSearchInfo>> map);
 }

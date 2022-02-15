@@ -1,9 +1,6 @@
 import com.google.common.collect.Lists;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
@@ -13,15 +10,15 @@ class SearchEngineServiceImpl implements SearchEngineService{
     private static ForkJoinPool forkJoinPool = new ForkJoinPool(numberOfProcessors);
 
     @Override
-    public Map<String, List<DataSearchInfo>> match(List<String> search, String text) {
+    public Map<String, Set<DataSearchInfo>> match(int partition, List<String> search, String text) {
         List<String> lines = Arrays.stream(text.split("\n")).collect(Collectors.toList());
-        List<List<String>> partitions = Lists.partition(lines, ConfigurationDefaults.LINE_LIMIT);
+        List<List<String>> source = Lists.partition(lines, ConfigurationDefaults.LINE_LIMIT);
 
         SearchingTask searchingTask = SearchingTask.builder()
-                .partitionNumber(0)
+                .partitionNumber(partition)
                 .dataSearchList(search)
                 .subSource(Collections.emptyList())
-                .source(partitions)
+                .source(source)
                 .matcherServiceImpl(new SearchServiceImpl())
                 .build();
 
