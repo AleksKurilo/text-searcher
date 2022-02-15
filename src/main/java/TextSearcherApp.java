@@ -15,9 +15,9 @@ public class TextSearcherApp {
 
     static Logger logger = Logger.getLogger(TextSearcherApp.class.getName());
 
-    private static final SearchEngineService SEARCH_ENGINE_SERVICE = SearchBuilder.searchService();
-    private static final AggregatorService AGGREGATOR_SERVICE = AggregatorBuilder.aggregatorService();
-    private static final OutputService OUTPUT_SERVICE = AggregatorBuilder.outputService();
+    private static final SearchEngineService SEARCH_ENGINE_SERVICE = new SearchEngineServiceImpl();
+    private static final AggregatorService AGGREGATOR_SERVICE = new AggregatorServiceImpl();
+    private static final OutputService OUTPUT_SERVICE = new OutputConsoleService();
 
     /**
      * Run application.
@@ -28,7 +28,7 @@ public class TextSearcherApp {
         List<String> search = FileUtils.readClasspathFileAsList("source/input.txt");
         List<Map<String, Set<DataSearchInfo>>> resultList = new ArrayList<>();
 
-        try (Stream<String> stream = Files.lines(Paths.get(ClassLoader.getSystemResource("source/big-1.txt").toURI()))) {
+        try (Stream<String> stream = Files.lines(Paths.get(ClassLoader.getSystemResource("source/big.txt").toURI()))) {
 
             AtomicInteger partition = new AtomicInteger(0);
             final List<String> lines = new ArrayList<>();

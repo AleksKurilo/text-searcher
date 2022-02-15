@@ -1,7 +1,7 @@
 import java.util.Map;
 import java.util.Set;
 
-class OutputServiceImpl implements OutputService{
+class OutputConsoleService implements OutputService{
 
     @Override
     public void print(Map<String, Set<DataSearchInfo>> map) {
