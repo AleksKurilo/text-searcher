@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TextSearcherApp {
@@ -47,7 +46,7 @@ public class TextSearcherApp {
                 lines.add(line);
 
                 if (lines.size() == ConfigurationDefaults.LINE_LIMIT) {
-                    String text = lines.stream().collect(Collectors.joining("\n"));
+                    String text = String.join("\n", lines);
                     result.add(SEARCH_ENGINE_SERVICE.match(partition.get(), search, text));
                     partition.incrementAndGet();
                     lines.clear();
@@ -55,7 +54,7 @@ public class TextSearcherApp {
 
             });
 
-            String text = lines.stream().collect(Collectors.joining("\n"));
+            String text = String.join("\n", lines);
             result.add(SEARCH_ENGINE_SERVICE.match(partition.get(), search, text));
         }
     }
