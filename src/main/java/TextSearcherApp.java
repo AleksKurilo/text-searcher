@@ -28,7 +28,7 @@ public class TextSearcherApp {
         List<String> search = FileUtils.readClasspathFileAsList("source/input.txt");
         List<Map<String, Set<DataSearchInfo>>> resultList = new ArrayList<>();
 
-        try (Stream<String> stream = Files.lines(Paths.get(ClassLoader.getSystemResource("source/big.txt").toURI()))) {
+        try (Stream<String> stream = Files.lines(Paths.get(ClassLoader.getSystemResource("source/big-1.txt").toURI()))) {
 
             AtomicInteger partition = new AtomicInteger(0);
             final List<String> lines = new ArrayList<>();

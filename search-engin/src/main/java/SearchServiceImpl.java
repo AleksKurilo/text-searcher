@@ -1,10 +1,7 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 class SearchServiceImpl implements SearchService {
-
-    private static final String SEPARATE_WORD_TEMPLATE = " %s ";
-    private static final String SEPARATE_WORD_IN_THE_BEGINNING_LINE_TEMPLATE = "%s ";
-    private static final String SEPARATE_WORD_IN_THE_END_LINE_TEMPLATE = " %s";
 
     @Override
     public Map<String, Set<DataSearchInfo>> match(int partitionNumber, List<String> dataSearchList, List<String> source) {
@@ -27,15 +24,8 @@ class SearchServiceImpl implements SearchService {
 
         for (String line : source) {
             lineNumber++;
-            int charOffset = searchInLine(search, line);
-
-            if (charOffset != -1) {
-                DataSearchInfo dataSearchInfo = DataSearchInfo.builder()
-                        .lineOffset((partitionNumber * ConfigurationDefaults.LINE_LIMIT) + lineNumber)
-                        .charOffset(charOffset)
-                        .build();
-                dataSearchInfos.add(dataSearchInfo);
-            }
+            int lineOffset = (partitionNumber * ConfigurationDefaults.LINE_LIMIT) + lineNumber;
+            dataSearchInfos.addAll(searchInLine(lineOffset, search, line));
         }
 
         Map<String, Set<DataSearchInfo>> result = new HashMap<>();
@@ -47,17 +37,34 @@ class SearchServiceImpl implements SearchService {
         return result;
     }
 
-    private int searchInLine(String search, String line){
-        int charOffset = line.indexOf(String.format(SEPARATE_WORD_TEMPLATE, search));
+    private Set<DataSearchInfo> searchInLine(int lineOffset, String search, String line) {
+        int matherCount = (int) Arrays.stream(line.split(" "))
+                .filter(word -> word.equals(search)).count();
 
-        if (charOffset == -1) {
-            charOffset = line.indexOf(String.format(SEPARATE_WORD_IN_THE_BEGINNING_LINE_TEMPLATE, search));
+        if (matherCount == 0) {
+            return Collections.emptySet();
         }
 
-        if (charOffset == -1) {
-            charOffset = line.indexOf(String.format(SEPARATE_WORD_IN_THE_END_LINE_TEMPLATE, search));
+        List<Integer> charOffsetList = new ArrayList<>();
+
+        for (int i = 0; i < matherCount; i++) {
+            int charOffset = line.indexOf(search);
+
+            if (charOffsetList.contains(charOffset)) {
+                int index = line.indexOf(search, charOffset + 1);
+                charOffsetList.add(index);
+            } else {
+                charOffsetList.add(charOffset);
+            }
         }
 
-        return charOffset;
+        return charOffsetList.stream()
+                .map(charOffset -> DataSearchInfo.builder()
+                        .lineOffset(lineOffset)
+                        .charOffset(charOffset)
+                        .build()
+                )
+                .collect(Collectors.toSet());
+
     }
 }

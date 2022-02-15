@@ -14,14 +14,20 @@ class SearchServiceImplTest {
 
     @Test
     void matchTest() {
-        List<String> search = List.of("test", "test2");
-        List<String> text = List.of("1111", "test 55 $$ 666", "111--test--11 11111 test2");
+        List<String> search = List.of("Donald", "Mat", "Richard");
+        List<String> text = List.of(
+                "1111",
+                "Donald Richard 55 $$ 666",
+                "MacDonald Donald Mat Donald"
+        );
 
         Map<String, Set<DataSearchInfo>> actual = unit.match(0, search, text);
 
-        assertNotNull(actual.get("test"), "should contains result");
-        assertEquals(2, actual.get("test").size(), "should contains 1 result");
-        assertEquals(3, actual.get("test2").stream().findFirst().get().lineOffset, "wrong lineOffset for given value");
-        assertEquals(19, actual.get("test2").stream().findFirst().get().charOffset, "wrong charOffset for given value");
+        assertNotNull(actual.get("Donald"), "should contains result");
+        assertNotNull(actual.get("Mat"), "should contains result");
+        assertNotNull(actual.get("Richard"), "should contains result");
+        assertEquals(3, actual.get("Donald").size(), "should contains 3 result");
+        assertEquals(3, actual.get("Donald").stream().findFirst().get().lineOffset, "wrong lineOffset for given value");
+        assertEquals(10, actual.get("Donald").stream().findFirst().get().charOffset, "wrong charOffset for given value");
     }
 }
