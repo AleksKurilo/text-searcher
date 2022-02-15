@@ -12,7 +12,7 @@ class SearchEngineServiceImplTest {
 
     @Test
     void matchTest() {
-        List<String> search = List.of("test", "test2");
+        List<String> search = List.of("text", "test2");
         String text = "" +
                 "Just random text " +
                 "for testing" +
@@ -20,7 +20,7 @@ class SearchEngineServiceImplTest {
 
         Map<String, Set<DataSearchInfo>> actual = unit.match(0, search, text);
 
-        assertNotNull(actual.get("test"), "should contains result");
+        assertNotNull(actual.get("text"), "should contains result");
     }
 
 }
